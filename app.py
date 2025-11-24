@@ -53,5 +53,10 @@ def admin_settings():
 def logout():
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/admin/employees/register')
+def admin_register_employee():
+    return render_template('admin/employee_register.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
