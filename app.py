@@ -1,10 +1,10 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for,request
 from models import db, Employee, Pickup
 
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
@@ -39,7 +39,8 @@ def admin_requests():
 
 @app.route('/admin/employees')
 def admin_employees():
-    return render_template('admin/employee.html', employees=[])
+    employees = Employee.query.all()  
+    return render_template('admin/employee.html', employees=employees)
 
 @app.route('/admin/centers')
 def admin_centers():
@@ -63,9 +64,26 @@ def admin_settings():
 def logout():
     return redirect(url_for('admin_dashboard'))
 
-@app.route('/admin/employees/register')
+@app.route('/admin/employees/register', methods=['GET', 'POST'])
 def admin_register_employee():
+    if request.method == 'POST':
+        name = request.form['name']
+        phone = request.form['phone']
+        email = request.form['email']
+        password = request.form['password']
+
+
+
+
+        new_employee = Employee(name=name,  phone=phone,email=email, password=password )
+        db.session.add(new_employee)
+        db.session.commit()
+
+        print(f"New employee added: {name}, {phone},{password},{email}")
+        return redirect(url_for('admin_employees'))
+
     return render_template('admin/employee_register.html')
+
 
 
 if __name__ == '__main__':
