@@ -1,6 +1,15 @@
 from flask import Flask, render_template, redirect, url_for
+from models import db, Employee, Pickup
 
 app = Flask(__name__)
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/data.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+db.init_app(app)
+
 
 DEFAULT_METRICS = {
     'critical_alerts': 0,
@@ -11,15 +20,17 @@ DEFAULT_METRICS = {
     'recent_pickups': [] 
 }
 
+
 @app.route('/admin')
 def admin_dashboard():
-    return render_template('admin/index.html', 
-        pickups=[], 
-        employees=[], 
-        centers=[], 
+    return render_template(
+        'admin/index.html',
+        pickups=[],
+        employees=[],
+        centers=[],
         reports=[],
-        user_name='Admin User',  
-        **DEFAULT_METRICS 
+        user_name='Admin User',
+        **DEFAULT_METRICS
     )
 
 @app.route('/admin/requests')
@@ -46,7 +57,6 @@ def admin_settings():
         'last_login': '2025-11-23 20:36:00',
         'role': 'System Administrator'
     }
-
     return render_template('admin/settings.html', user=user_data)
 
 @app.route('/logout')
