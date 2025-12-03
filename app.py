@@ -1,12 +1,13 @@
 from flask import Flask, render_template, redirect, url_for,request
 from models import db, Employee, Pickup
+import os
+
 
 app = Flask(__name__)
 
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 
 db.init_app(app)
 
@@ -33,22 +34,31 @@ def admin_dashboard():
         **DEFAULT_METRICS
     )
 
+
+
 @app.route('/admin/requests')
 def admin_requests():
-    return render_template('admin/requests.html', pickups=[])
+    pickups = Pickup.query.all()
+    employees = Employee.query.all()  
+    return render_template('admin/requests.html', pickups=pickups, employees=employees)
+
 
 @app.route('/admin/employees')
 def admin_employees():
     employees = Employee.query.all()  
     return render_template('admin/employee.html', employees=employees)
 
+
+
 @app.route('/admin/centers')
 def admin_centers():
     return render_template('admin/centers.html', centers=[])
 
+
 @app.route('/admin/reports')
 def admin_reports():
     return render_template('admin/reports.html', reports=[])
+
 
 @app.route('/admin/settings')
 def admin_settings():
@@ -60,9 +70,13 @@ def admin_settings():
     }
     return render_template('admin/settings.html', user=user_data)
 
+
+
 @app.route('/logout')
 def logout():
     return redirect(url_for('admin_dashboard'))
+
+
 
 @app.route('/admin/employees/register', methods=['GET', 'POST'])
 def admin_register_employee():
@@ -71,10 +85,6 @@ def admin_register_employee():
         phone = request.form['phone']
         email = request.form['email']
         password = request.form['password']
-
-
-
-
         new_employee = Employee(name=name,  phone=phone,email=email, password=password )
         db.session.add(new_employee)
         db.session.commit()
@@ -84,6 +94,18 @@ def admin_register_employee():
 
     return render_template('admin/employee_register.html')
 
+
+
+@app.route('/admin/requests/<int:pickup_id>/assign', methods=['POST'])
+def assign_employee(pickup_id):
+    employee_id = request.form.get('employee_id')
+    pickup = Pickup.query.get_or_404(pickup_id)
+
+    pickup.assigned_employee_id = employee_id
+    pickup.state = 'Assigned'
+
+    db.session.commit()
+    return redirect(url_for('admin_requests'))
 
 
 if __name__ == '__main__':

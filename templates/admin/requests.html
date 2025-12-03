@@ -34,8 +34,17 @@
                 <td>{{ pickup.assigned_employee or 'Unassigned' }}</td>
                 <td>{{ pickup.assigned_center or 'Pending' }}</td>
                 <td>
-                    <a href="#" class="btn btn-sm btn-success">Assign</a>
-                    <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                    <form action="{{ url_for('assign_employee', pickup_id=pickup.id) }}" method="POST" class="d-flex">
+                        <select name="employee_id" class="form-select form-select-sm me-2" required>
+                            <option value="" disabled selected>Select Employee</option>
+                            {% for emp in employees %}
+                            <option value="{{ emp.id }}" {% if pickup.assigned_employee_id == emp.id %}selected{% endif %}>
+                                {{ emp.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-success">Assign</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
