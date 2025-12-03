@@ -12,24 +12,29 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 
-DEFAULT_METRICS = {
-    'critical_alerts': 0,
-    'pending_requests': 0,
-    'field_staff': 0,
-    'open_centers': 0,
-    'last_report_time': "Just Now",
-    'recent_pickups': [] 
-}
-
-
 @app.route('/admin')
 def admin_dashboard():
+    pickups = Pickup.query.all()
+    employees = Employee.query.all()
+    centers = [] 
+    reports = []  
+
+    DEFAULT_METRICS = {
+        'critical_alerts': 0,
+        'pending_requests': len([p for p in pickups if p.status.lower() == 'pending']),
+        'field_staff': len(employees),
+        'open_centers': 0,
+        'last_report_time': "Just Now",
+        'recent_pickups': pickups[-5:]  
+    }
+
+
     return render_template(
         'admin/index.html',
-        pickups=[],
-        employees=[],
-        centers=[],
-        reports=[],
+        pickups=pickups,
+        employees=employees,
+        centers=centers,
+        reports=reports,
         user_name='Admin User',
         **DEFAULT_METRICS
     )
@@ -41,6 +46,8 @@ def admin_requests():
     pickups = Pickup.query.all()
     employees = Employee.query.all()  
     return render_template('admin/requests.html', pickups=pickups, employees=employees)
+
+
 
 
 @app.route('/admin/employees')
@@ -102,10 +109,16 @@ def assign_employee(pickup_id):
     pickup = Pickup.query.get_or_404(pickup_id)
 
     pickup.assigned_employee_id = employee_id
-    pickup.state = 'Assigned'
+    pickup.status = 'Assigned'
 
     db.session.commit()
     return redirect(url_for('admin_requests'))
+
+
+@app.route('/admin/requests/<int:id>')
+def view_pickup(id):
+    pickup = Pickup.query.get_or_404(id)
+    return render_template('admin/view_pickup.html', pickup=pickup)
 
 
 if __name__ == '__main__':
