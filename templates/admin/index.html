@@ -85,15 +85,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>#1005</td><td>Shyno Elsa Paul</td><td>Monitor, PC</td><td><span class="status-pending status-badge">PENDING</span></td><td>2025-11-23</td><td><a href="#" class="plain-action-link">Process</a></td></tr>
-                        <tr><td>#1004</td><td>Karthika Suresh</td><td>Server Rack</td><td><span class="status-assigned status-badge">ASSIGNED</span></td><td>2025-11-22</td><td><a href="#" class="plain-action-link">Track</a></td></tr>
-                         <tr><td>#1003</td><td>Daniel Thomas</td><td>Laptop, Cables</td><td><span class="status-complete status-badge">COMPLETE</span></td><td>2025-11-21</td><td><a href="#" class="plain-action-link">Review</a></td></tr>
+                        <tr><td>#4</td><td>Shyno Elsa Paul</td><td>Monitor, PC</td><td><span class="status-pending status-badge">PENDING</span></td><td>2025-11-23</td><td><a href="#" class="plain-action-link">Process</a></td></tr>
+                        <tr><td>#3</td><td>Karthika Suresh</td><td>Server Rack</td><td><span class="status-assigned status-badge">ASSIGNED</span></td><td>2025-11-22</td><td><a href="#" class="plain-action-link">Track</a></td></tr>
+                         <tr><td>#5</td><td>Daniel Thomas</td><td>Laptop, Cables</td><td><span class="status-complete status-badge">COMPLETE</span></td><td>2025-11-21</td><td><a href="#" class="plain-action-link">Review</a></td></tr>
                         {% for pickup in recent_pickups|default([]) %}
                         <tr>
                             <td>#{{ pickup.id }}</td>
                             <td>{{ pickup.user_name }}</td>
                             <td>{{ pickup.item_description }}</td>
-                            <td><span class="status-{{ pickup.state|lower }} status-badge">{{ pickup.state|upper }}</span></td>
+                            <td>
+                                {% set status = pickup.status|default('PENDING') %}
+                                <span class="status-{{ status|lower }} status-badge">
+                                    {{ status|upper }}
+                                </span>
+                            </td>
                             <td>{{ pickup.date }}</td>
                             <td><a href="{{ url_for('view_pickup', id=pickup.id) }}" class="btn btn-sm btn-primary">View</a></td>
                         </tr>

@@ -18,5 +18,12 @@ class Pickup(db.Model):
     assigned_employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=True)
     assigned_employee = db.relationship('Employee', backref='pickups')
 
-    assigned_center = db.Column(db.String(100), nullable=True)
+    assigned_center = db.Column(db.Integer,db.ForeignKey('recycling_center.id'), nullable=True)
+    assigned_center_obj = db.relationship('RecyclingCenter', backref='pickups')
+
+class RecyclingCenter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(200))
+    capacity = db.Column(db.Integer)
 

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, url_for,request
-from models import db, Employee, Pickup
+from models import db, Employee, Pickup,RecyclingCenter
 import os
 
 
@@ -16,8 +16,19 @@ db.init_app(app)
 def admin_dashboard():
     pickups = Pickup.query.all()
     employees = Employee.query.all()
-    centers = [] 
+    centers = RecyclingCenter.query.all()
     reports = []  
+
+
+    for pickup in pickups:
+        if pickup.status.upper() == 'ASSIGNED' and not pickup.assigned_employee_id:
+            pickup.display_status = 'PENDING'
+        elif pickup.status.upper() == 'ASSIGNED' and pickup.assigned_employee_id:
+            pickup.display_status = 'ASSIGNED'
+        elif pickup.status:
+            pickup.display_status = pickup.status.upper()
+        else:
+            pickup.display_status = 'PENDING'
 
     DEFAULT_METRICS = {
         'critical_alerts': 0,
@@ -25,7 +36,7 @@ def admin_dashboard():
         'field_staff': len(employees),
         'open_centers': 0,
         'last_report_time': "Just Now",
-        'recent_pickups': pickups[-5:]  
+        'recent_pickups': pickups[::-1][-5:]  
     }
 
 
@@ -45,7 +56,12 @@ def admin_dashboard():
 def admin_requests():
     pickups = Pickup.query.all()
     employees = Employee.query.all()  
-    return render_template('admin/requests.html', pickups=pickups, employees=employees)
+    centers = RecyclingCenter.query.all()
+
+    for pickup in pickups:
+        pickup.assigned_employee_name = pickup.assigned_employee.name if pickup.assigned_employee else 'Unassigned'
+        pickup.assigned_center_name = pickup.assigned_center_obj.name if pickup.assigned_center_obj else 'Pending'
+    return render_template('admin/requests.html', pickups=pickups, employees=employees, centers=centers)
 
 
 
@@ -59,7 +75,8 @@ def admin_employees():
 
 @app.route('/admin/centers')
 def admin_centers():
-    return render_template('admin/centers.html', centers=[])
+    centers = RecyclingCenter.query.all()
+    return render_template('admin/centers.html', centers=centers)
 
 
 @app.route('/admin/reports')
@@ -107,10 +124,18 @@ def admin_register_employee():
 def assign_employee(pickup_id):
     employee_id = request.form.get('employee_id')
     pickup = Pickup.query.get_or_404(pickup_id)
+    center_id_str = request.form.get('center_id')
 
-    pickup.assigned_employee_id = employee_id
-    pickup.status = 'Assigned'
+    employee_id = int(employee_id_str) if employee_id_str and employee_id_str != 'None' else None
+    center_id = int(center_id_str) if center_id_str and center_id_str != 'None' else None
 
+    if employee_id and employee_id != 'None':
+        pickup.assigned_employee_id = employee_id
+        pickup.status = 'Assigned'
+    else:
+        pickup.assigned_employee_id = None
+        pickup.status = 'Pending' 
+    
     db.session.commit()
     return redirect(url_for('admin_requests'))
 
