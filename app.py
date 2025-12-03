@@ -122,7 +122,7 @@ def admin_register_employee():
 
 @app.route('/admin/requests/<int:pickup_id>/assign', methods=['POST'])
 def assign_employee(pickup_id):
-    employee_id = request.form.get('employee_id')
+    employee_id_str = request.form.get('employee_id')
     pickup = Pickup.query.get_or_404(pickup_id)
     center_id_str = request.form.get('center_id')
 
