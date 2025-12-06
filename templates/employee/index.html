@@ -1,0 +1,65 @@
+{% extends 'employee/base_employee.html' %}
+
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h5 class="fw-bold mb-4 border-bottom pb-2">Your Current Assignments</h5>
+    
+    {% if tasks %}
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Req. ID</th>
+                <th>Item Description</th>
+                <th>User Name</th>
+                <th>Status</th>
+                <th>Date Assigned</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>#{{ task.id }}</td>
+                <td>
+                    <i class="fa fa-recycle me-2 text-primary"></i> 
+                    {{ task.item_description }}
+                </td>
+                <td>{{ task.user_name }}</td>
+                <td>
+                    {% if task.status == 'Assigned' %}
+                        <span class="badge bg-warning">Scheduled Pickup</span>
+                    {% elif task.status == 'Picked Up' %}
+                        <span class="badge bg-info">In Transit to Center</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ task.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M') if task.created_at else 'N/A' }}</td>
+                <td>
+                    {% if task.status == 'Assigned' %}
+                        <a href="{{ url_for('employee_pickup_action', pickup_id=task.id) }}" class="btn btn-sm btn-employee-primary">
+                            <i class="fa fa-check me-1"></i> Confirm Pickup
+                        </a>
+                    {% elif task.status == 'Picked Up' %}
+                        <a href="{{ url_for('employee_delivery_action', pickup_id=task.id) }}" class="btn btn-sm btn-success">
+                            <i class="fa fa-gift me-1"></i> Deliver Reward
+                        </a>
+                    {% else %}
+                        <span class="text-muted">No Action Needed</span>
+                    {% endif %}
+                </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info border-0">
+        <h4 class="alert-heading"><i class="fa fa-clipboard-check me-2"></i> All Clear!</h4>
+        <p>You currently have no pending pickup requests or reward deliveries assigned to you.</p>
+        <hr>
+        <p class="mb-0">Check the <a href="{{ url_for('employee_history') }}" class="alert-link">Task History</a> for your completed jobs.</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

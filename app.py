@@ -11,6 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
+# admin: 
 
 @app.route('/admin')
 def admin_dashboard():
@@ -144,6 +145,14 @@ def assign_employee(pickup_id):
 def view_pickup(id):
     pickup = Pickup.query.get_or_404(id)
     return render_template('admin/view_pickup.html', pickup=pickup)
+
+
+
+# employee:
+
+@app.route('/employee')
+def employee_dashboard():
+    return render_template('employee/index.html')
 
 
 if __name__ == '__main__':
