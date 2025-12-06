@@ -6,12 +6,7 @@
     <title>{% block title %}Employee Dashboard{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        .sidebar { background-color: #2c3e50; color: white; width: 220px; height: 100vh; position: fixed; }
-        .content-wrapper { margin-left: 220px; padding: 20px; background-color: #f8f9fa; min-height: 100vh; }
-        .nav-link.active { background: #34495e; border-left: 5px solid #10b981; }
-        .btn-primary-accent { background-color: #10b981; border-color: #10b981; color: white; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='employee/employee.css')}}"
 </head>
 <body>
 <div class="d-flex">
@@ -44,5 +39,6 @@
     </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='employee/js/employee.js') }}"></script>
 </body>
 </html>
