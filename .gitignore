@@ -1,0 +1,9 @@
+# Virtual environment
+myvenv/
+
+# Python cache and other junk
+__pycache__/
+instance/
+.pytest_cache/
+*.pyc
+.env
