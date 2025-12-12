@@ -1,19 +1,28 @@
-{% extends 'base.html' %}
+{% extends "layout.html" %}
 
 {% block content %}
-<h1>Welcome to the Dashboard</h1>
-<div class="cards">
-    <div class="card">
-        <h3>Users</h3>
-        <p>150</p>
+<!-- page header class -->
+    <div class="page header">
+        <h1>Admin Dashboard</h1>
+        <div class="subtitle">Welcome back, Admin</div>
     </div>
-    <div class="card">
-        <h3>Orders</h3>
-        <p>53</p>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total requests</h3>
+            <p class="stat-number" id="total-requests">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Active Employees</h3>
+            <p class="stat-number" id="total-employees">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Processing Reports</h3>
+            <p class="stat-number" id="total-reports">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Deliveries</h3>
+            <p class="stat-number" id="total-deliveries">0</p>
+        </div>
     </div>
-    <div class="card">
-        <h3>Revenue</h3>
-        <p>$12,340</p>
-    </div>
-</div>
 {% endblock %}
