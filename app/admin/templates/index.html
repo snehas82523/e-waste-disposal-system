@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- page header class -->
+    <div class="page header">
+        <h1>Admin Dashboard</h1>
+        <div class="subtitle">Welcome back, Admin</div>
+    </div>
+    <!-- div class changed -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total requests</h3>
+            <p class="stat-number" id="total-requests">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Active Employees</h3>
+            <p class="stat-number" id="total-employees">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Processing Reports</h3>
+            <p class="stat-number" id="total-reports">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Deliveries</h3>
+            <p class="stat-number" id="total-deliveries">0</p>
+        </div>
+    </div>
+{% endblock %}
