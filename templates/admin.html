@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="header-section" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Admin Dashboard</h1>
+        <a href="{{ url_for('admin_logout') }}" class="btn-sm btn-outline"
+            style="text-decoration: none; color: white; background-color: #dc3545; border-color: #dc3545; margin-right: 20px;">Logout</a>
+    </div>
+
+    <div class="grid-container">
+        <!-- Employees Section -->
+        <div class="card">
+            <h2>Manage Employees</h2>
+            <form id="create-employee-form" class="admin-form">
+                <input type="text" id="emp-name" placeholder="Name" required>
+                <input type="email" id="emp-email" placeholder="Email" required>
+                <input type="tel" id="emp-phone" placeholder="Phone">
+                <!-- Role removed as per request -->
+                <button type="submit" class="btn-secondary">Add Employee</button>
+            </form>
+            <div class="search-bar" style="margin-bottom: 1rem; margin-top: 1rem;">
+                <input type="text" id="employee-search" placeholder="Search employees..." class="form-control"
+                    style="width: 100%; padding: 0.5rem;">
+            </div>
+            <div id="employee-list" class="list-container">
+                <p>Loading employees...</p>
+            </div>
+        </div>
+
+        <!-- Pickup Requests Section -->
+        <div class="card">
+            <h2>Pickup Requests</h2>
+            <div id="request-list" class="list-container">
+                <p>Loading requests...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
