@@ -1,28 +1,28 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 <!-- page header class -->
-    <div class="page header">
-        <h1>Admin Dashboard</h1>
-        <div class="subtitle">Welcome back, Admin</div>
-    </div>
+    <div class="hero-section">
+    <h1>Turn Your <span style="color:var(--accent-color)">E-Waste</span> into Rewards</h1>
+    <p>Recycle your electronics responsibly and earn rewards.</p>
+
     <!-- div class changed -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h3>Total requests</h3>
-            <p class="stat-number" id="total-requests">0</p>
-        </div>
-        <div class="stat-card">
-            <h3>Active Employees</h3>
-            <p class="stat-number" id="total-employees">0</p>
-        </div>
-        <div class="stat-card">
-            <h3>Processing Reports</h3>
-            <p class="stat-number" id="total-reports">0</p>
-        </div>
-        <div class="stat-card">
-            <h3>Deliveries</h3>
-            <p class="stat-number" id="total-deliveries">0</p>
+        <div class="form-container">
+            <h3>Request a Pickup</h3>
+            <form id="pickup-request-form">
+                <select id="item-type" required>
+                    <option value="" disabled selected>Select Item Type...</option>
+                    <option value="Laptop">Laptop</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Tablet">Tablet</option>
+                    <option value="Appliance">Appliance</option>
+                    <option value="Other">Other</option>
+                </select>
+                <textarea id="item-desc" placeholder="Describe the items (e.g., Old Laptop, Broken Phone)"
+                    required></textarea>
+                <button type="submit" class="btn-primary">Submit Request</button>
+            </form>
+            <div id="submission-message"></div>
         </div>
     </div>
 {% endblock %}
