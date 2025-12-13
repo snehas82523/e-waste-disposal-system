@@ -1,8 +1,16 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,request, redirect, url_for, flash, session, jsonify
+from models import db, Employee, PickupRequest
 
 # Initialize
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 # user page
 @app.route('/')
