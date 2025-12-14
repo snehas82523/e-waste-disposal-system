@@ -18,9 +18,28 @@ def home():
     return render_template('index.html')
 
 # admin login
-@app.route('/admin/login')
+# Admin credentials
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "admin123"
+
+@app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
-    return render_template('admin_login.html')  
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash("Invalid username or password")
+            return redirect(url_for('admin_login'))
+    return render_template('admin_login.html')
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('admin_login'))
+
 
 # admin dashboard
 @app.route('/admin')
