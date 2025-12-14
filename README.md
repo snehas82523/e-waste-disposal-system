@@ -6,6 +6,9 @@ This project is a web-based Information System designed to manage the lifecycle 
 
 The system is built as a Single Page Application (SPA) using a Flask (Python) backend and a Vanilla JavaScript frontend, utilizing a RESTful API architecture.
 
+## Live Demo
+[View Live Site](https://sneha2025.pythonanywhere.com/)
+
 ## Features
 
 * Public Portal: Users can submit pickup requests for their electronic waste.
