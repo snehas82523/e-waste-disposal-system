@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isEmployee) setupEmployeePortal();
 });
 
-function setupIndex() {
+async function setupIndex() {
     console.log("Index page loaded");
 
     const form = document.getElementById('pickup-request-form');
@@ -21,11 +21,19 @@ function setupIndex() {
             const item_type = document.getElementById('item-type').value;
             const description = document.getElementById('item-desc').value;
 
-            // Updated to /api/requests
+            // Fetch the current user dynamically (replace 1 with real auth later)
+            const userRes = await fetch('/api/users/1'); // Example: hardcoded user ID 1
+            const userData = await userRes.json();
+
+            // Submit pickup request with correct user_id
             const res = await fetch('/api/requests', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ item_type, item_description: description })
+                body: JSON.stringify({ 
+                    item_type, 
+                    item_description: description,
+                    user_id: userData.id 
+                })
             });
 
             const data = await res.json();
@@ -51,7 +59,6 @@ function setupAdmin() {
         });
     }
 
-    // Initial load
     loadEmployees();
 
     // Add Employee
@@ -77,7 +84,6 @@ function setupAdmin() {
 
     // Load Pickup Requests
     async function loadRequests() {
-        // Updated to /api/requests
         const res = await fetch('/api/requests'); 
         const requests = await res.json();
         const list = document.getElementById('request-list');
@@ -97,7 +103,6 @@ function setupAdmin() {
         });
     }
 
-    // Initial load of pickup requests
     loadRequests();
 }
 
