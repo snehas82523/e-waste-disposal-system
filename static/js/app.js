@@ -21,14 +21,15 @@ function setupIndex() {
             const item_type = document.getElementById('item-type').value;
             const description = document.getElementById('item-desc').value;
 
-            const res = await fetch('/pickup', {
+            // Updated to /api/requests
+            const res = await fetch('/api/requests', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ item_type, description })
+                body: JSON.stringify({ item_type, item_description: description })
             });
 
             const data = await res.json();
-            document.getElementById('submission-message').innerText = data.message;
+            document.getElementById('submission-message').innerText = data.message || "Request submitted!";
             form.reset();
         });
     }
@@ -39,7 +40,7 @@ function setupAdmin() {
 
     // Load Employees
     async function loadEmployees() {
-        const res = await fetch('/employees'); 
+        const res = await fetch('/api/employees'); 
         const employees = await res.json();
         const list = document.getElementById('employee-list');
         list.innerHTML = '';
@@ -62,23 +63,22 @@ function setupAdmin() {
         const email = document.getElementById('emp-email').value;
         const phone = document.getElementById('emp-phone').value;
 
-        const res = await fetch('/employees', {
+        const res = await fetch('/api/employees', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, phone })
         });
 
         const data = await res.json();
-        alert(data.message); 
+        alert(data.message || "Employee added successfully"); 
         createForm.reset();
-        // Refresh employee list
-    });
         loadEmployees(); 
+    });
 
     // Load Pickup Requests
     async function loadRequests() {
-        // GET all pickup requests
-        const res = await fetch('/pickup'); 
+        // Updated to /api/requests
+        const res = await fetch('/api/requests'); 
         const requests = await res.json();
         const list = document.getElementById('request-list');
         list.innerHTML = '';
@@ -91,7 +91,7 @@ function setupAdmin() {
                     <span class="req-id">#${req.id} - ${req.item_type}</span>
                     <span class="badge badge-pending">${req.status}</span>
                 </div>
-                <p>${req.description}</p>
+                <p>${req.item_description}</p>
             `;
             list.appendChild(div);
         });
@@ -128,7 +128,7 @@ function setupEmployeePortal() {
                     <span class="req-id">#${task.id} - ${task.item_type}</span>
                     <span class="badge badge-info">${task.status}</span>
                 </div>
-                <p>${task.description}</p>
+                <p>${task.item_description}</p>
             `;
             tasksList.appendChild(div);
         });
