@@ -55,6 +55,15 @@ function setupAdmin() {
         employees.forEach(emp => {
             const div = document.createElement('div');
             div.textContent = `${emp.name} (${emp.email}) - ${emp.phone || 'N/A'}`;
+            
+            // Add Delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.style.color = 'red';
+            deleteBtn.style.marginLeft = '10px';
+            deleteBtn.onclick = () => deleteEmployee(emp.id);
+
+            div.appendChild(deleteBtn);
             list.appendChild(div);
         });
     }
@@ -106,6 +115,23 @@ function setupAdmin() {
     }
 
     loadRequests();
+
+    // Delete Employee
+    window.deleteEmployee = async (empId) => {
+        if (!confirm('Are you sure you want to delete this employee?')) return;
+
+        try {
+            const res = await fetch(`/api/employees/${empId}`, { method: 'DELETE' });
+            if (res.ok) {
+                loadEmployees(); // Refresh list
+            } else {
+                alert('Failed to delete employee');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error deleting employee');
+        }
+    };
 }
 
 function setupEmployeePortal() {
