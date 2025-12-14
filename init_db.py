@@ -14,7 +14,7 @@ with app.app_context():
 
     # Seed a demo Employee
     if not Employee.query.get(1):
-        demo_emp = Employee(name='John Doe', email='john@example.com', role='Driver', status='Active')
+        demo_emp = Employee(name='John Doe', email='john@example.com', role='collector', status='Active')
         db.session.add(demo_emp)
         print("Seed Employee created.")
 

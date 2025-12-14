@@ -40,9 +40,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    background: var(--primary-color); /* Green Banner */
+    border-bottom: 1px solid var(--primary-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -51,13 +51,13 @@ body {
 .logo {
     font-weight: 700;
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: white; /* White text on green */
     letter-spacing: -0.5px;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.9); /* Light text */
     font-weight: 500;
     margin-left: 2rem;
     transition: color 0.2s ease;
@@ -65,7 +65,7 @@ body {
 
 .nav-links a:hover,
 .nav-links a.active {
-    color: var(--accent-color);
+    color: var(--accent-color); /* Pop color on hover */
 }
 
 /* --- Layouts --- */
