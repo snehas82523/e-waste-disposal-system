@@ -66,5 +66,24 @@ def add_employee():
     db.session.commit()
     return jsonify({"message": "Employee added", "id": new_emp.id})
 
+
+# Submit pickup request from home page
+@app.route('/pickup', methods=['POST'])
+def create_request():
+    data = request.get_json()
+    new_request = PickupRequest(item_type=data['item_type'], description=data['description'])
+    db.session.add(new_request)
+    db.session.commit()
+    return jsonify({"message": "Pickup request submitted", "id": new_request.id})
+
+# Get all pickup requests (for admin)
+@app.route('/pickup', methods=['GET'])
+def get_requests():
+    requests = PickupRequest.query.order_by(PickupRequest.created_at.desc()).all()
+    return jsonify([{
+        "id": r.id, "item_type": r.item_type, "description": r.description, "status": r.status
+    } for r in requests])
+
+
 if __name__ == '__main__':
     app.run(debug=True)
