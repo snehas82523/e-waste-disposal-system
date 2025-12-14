@@ -52,9 +52,19 @@ def admin_dashboard():
 
 
 # employee
-@app.route('/employee')
-def employee_portal():
-    return render_template('employee_portal.html')  
+@app.route('/employees', methods=['GET'])
+def get_employees():
+    employees = Employee.query.all()
+    return jsonify([{"id": e.id, "name": e.name, "email": e.email, "phone": e.phone} for e in employees])
+
+# Add employee
+@app.route('/employees', methods=['POST'])
+def add_employee():
+    data = request.get_json()
+    new_emp = Employee(name=data['name'], email=data['email'], phone=data.get('phone'))
+    db.session.add(new_emp)
+    db.session.commit()
+    return jsonify({"message": "Employee added", "id": new_emp.id})
 
 if __name__ == '__main__':
     app.run(debug=True)
