@@ -94,6 +94,19 @@ def create_employee():
 
 
 
+@app.route('/api/employees/<int:emp_id>', methods=['DELETE'])
+def delete_employee(emp_id):
+    emp = Employee.query.get_or_404(emp_id)
+    try:
+        db.session.delete(emp)
+        db.session.commit()
+        return jsonify({'message': 'Employee deleted'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+
+
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
