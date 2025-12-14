@@ -1,10 +1,12 @@
 from flask import Flask, render_template,request, redirect, url_for, flash, session, jsonify
 from models import db, Employee, PickupRequest
+import os
 
 # Initialize
 app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SECRET_KEY'] = 'dev_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
