@@ -19,7 +19,6 @@ with app.app_context():
 def home():
     return render_template('index.html')
 
-# admin login
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -41,14 +40,12 @@ def admin_logout():
     session.pop('admin_logged_in', None)
     return redirect(url_for('home'))
 
-
-
-# admin dashboard
 @app.route('/admin')
 def admin_dashboard():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
     return render_template('admin.html')
+
 
 
 # employee
@@ -65,6 +62,15 @@ def add_employee():
     db.session.add(new_emp)
     db.session.commit()
     return jsonify({"message": "Employee added", "id": new_emp.id})
+
+# api
+
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return jsonify(user.to_dict())
+
+
 
 
 # Submit pickup request from home page
