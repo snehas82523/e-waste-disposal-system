@@ -65,6 +65,13 @@ def add_employee():
 
 # api
 
+
+@app.route('/api/employees', methods=['GET'])
+def get_employees():
+    employees = Employee.query.all()
+    return jsonify([e.to_dict() for e in employees])
+
+
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
