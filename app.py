@@ -1,20 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
-from models import db, User, Employee, PickupRequest
-import os
+from flask import Flask, render_template, jsonify, request, session, redirect, url_for, flash
+from models import db, User, Employee, PickupRequest, RecyclingCenter
 
-# Initialize
 app = Flask(__name__)
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SECRET_KEY'] = 'dev_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'super_secret_key_for_dev_only'
 
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
-
-# --- User Pages ---
+# Routes
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -46,22 +40,10 @@ def admin_dashboard():
         return redirect(url_for('admin_login'))
     return render_template('admin.html')
 
-# --- Employee APIs ---
-@app.route('/employees', methods=['GET'])
-def get_employees():
-    employees = Employee.query.all()
-    return jsonify([{"id": e.id, "name": e.name, "email": e.email, "phone": e.phone} for e in employees])
-
-@app.route('/employees', methods=['POST'])
-def add_employee():
-    data = request.get_json()
-    new_emp = Employee(name=data['name'], email=data['email'], phone=data.get('phone'))
-    db.session.add(new_emp)
-    db.session.commit()
-    return jsonify({"message": "Employee added", "id": new_emp.id})
+# --- API Endpoints ---
 
 @app.route('/api/employees', methods=['GET'])
-def get_employees_api():
+def get_employees():
     employees = Employee.query.all()
     return jsonify([e.to_dict() for e in employees])
 
@@ -95,14 +77,19 @@ def delete_employee(emp_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 400
 
-# --- Pickup Requests ---
+@app.route('/api/requests', methods=['GET'])
+def get_requests():
+    # In a real app, filter by role/user. For strict admin view here:
+    requests = PickupRequest.query.order_by(PickupRequest.created_at.desc()).all()
+    return jsonify([r.to_dict() for r in requests])
+
 @app.route('/api/requests', methods=['POST'])
 def create_request():
     data = request.json
-    # Assume User ID 1 exists for demo if not provided
-    user_id = data.get('user_id', 1)
+    # Simplify: assume User ID 1 exists for demo if not provided, or handle auth later
+    user_id = data.get('user_id', 1) 
     
-    # Create demo user if missing
+    # Robustness Check: If User 1 doesn't exist (e.g. DB cleared), create it to avoid 500 Error
     if user_id == 1 and not User.query.get(1):
         demo_user = User(id=1, username='DemoUser', email='user@example.com', password='password')
         db.session.add(demo_user)
@@ -117,27 +104,6 @@ def create_request():
     db.session.commit()
     return jsonify(new_req.to_dict()), 201
 
-@app.route('/api/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get_or_404(user_id)
-    return jsonify(user.to_dict())
-
-@app.route('/pickup', methods=['POST'])
-def create_pickup_request():
-    data = request.get_json()
-    new_request = PickupRequest(item_type=data['item_type'], description=data['description'])
-    db.session.add(new_request)
-    db.session.commit()
-    return jsonify({"message": "Pickup request submitted", "id": new_request.id})
-
-@app.route('/pickup', methods=['GET'])
-def get_requests():
-    requests = PickupRequest.query.order_by(PickupRequest.created_at.desc()).all()
-    return jsonify([{
-        "id": r.id, "item_type": r.item_type, "description": r.description, "status": r.status
-    } for r in requests])
-
-# --- New Routes for Assignment & Status ---
 @app.route('/api/requests/<int:req_id>/assign', methods=['PUT'])
 def assign_request(req_id):
     data = request.json
@@ -158,11 +124,23 @@ def update_request_status(req_id):
     data = request.json
     req = PickupRequest.query.get_or_404(req_id)
     
+    # Simple state transition validation could go here
     if 'status' in data:
         req.status = data['status']
     
     db.session.commit()
     return jsonify(req.to_dict())
 
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return jsonify(user.to_dict())
+
+@app.route('/employee')
+def employee_portal():
+    return render_template('employee_portal.html')
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True, port=5001)

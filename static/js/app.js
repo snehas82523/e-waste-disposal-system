@@ -59,12 +59,14 @@ function setupIndex() {
     });
 }
 
+
 // --- Admin Page ---
 function setupAdmin() {
     loadEmployees();
     loadRequests('request-list', true); // true = admin mode
     setupEmployeeForm();
 }
+
 
 let cachedEmployees = [];
 
@@ -229,6 +231,7 @@ async function loadEmployeeTasks(empId) {
         list.innerHTML = '<p class="error">Failed to load tasks.</p>';
     }
 }
+
 
 // --- Shared / Utils ---
 

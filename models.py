@@ -49,7 +49,7 @@ class PickupRequest(db.Model):
     item_description = db.Column(db.String(200), nullable=False)
     item_type = db.Column(db.String(50), nullable=False, default='Other')
     status = db.Column(db.String(50), default='Created') 
-    # status:Created, Assigned, Picked Up, Delivered to Center, Processed, Reward Collected, Delivered, Closed
+    # Statuses: Created, Assigned, Picked Up, Delivered to Center, Processed, Reward Collected, Delivered, Closed
     assigned_employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=True)
     assigned_center_id = db.Column(db.Integer, db.ForeignKey('recycling_center.id'), nullable=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
