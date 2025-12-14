@@ -72,6 +72,28 @@ def get_employees():
     return jsonify([e.to_dict() for e in employees])
 
 
+@app.route('/api/employees', methods=['POST'])
+def create_employee():
+    data = request.json
+    new_employee = Employee(
+        name=data['name'],
+        email=data['email'],
+        phone=data.get('phone'),
+        role=data.get('role', 'Collector'),
+        status='Active',
+        start_date=data.get('start_date')
+    )
+    db.session.add(new_employee)
+    try:
+        db.session.commit()
+        return jsonify(new_employee.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+
+
+
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get_or_404(user_id)

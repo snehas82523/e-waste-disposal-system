@@ -69,11 +69,13 @@ function setupAdmin() {
         const name = document.getElementById('emp-name').value;
         const email = document.getElementById('emp-email').value;
         const phone = document.getElementById('emp-phone').value;
+        const role = 'Collector'; // Default role; you can make it dynamic if needed
+        const start_date = new Date().toISOString().split('T')[0]; // Current date
 
         const res = await fetch('/api/employees', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, phone })
+            body: JSON.stringify({ name, email, phone, role, start_date })
         });
 
         const data = await res.json();
