@@ -1,4 +1,4 @@
-# E-Waste disposal System
+# E-Waste disposal and reward System
 
 ## Overview
 
@@ -11,20 +11,23 @@ The system is built as a Single Page Application (SPA) using a Flask (Python) ba
 
 ## Features
 
-* Public Portal: Users can submit pickup requests for their electronic waste.
-* Admin Dashboard:
-
+* **Public Portal & User Dashboard**:
+  * **Landing Page**: Clean, modern interface prompting users to recycle.
+  * **User Registration & Login**: Secure account creation.
+  * **Dedicated Dashboard**: Users have a personal dashboard to submit pickup requests and track them in real-time.
+  * **Request Tracking**: detailed status updates (Created -> Assigned -> Picked Up -> Recycled).
+* **Admin Dashboard**:
   * Secure Login/Logout.
-  * Manage Employees: Create, List, Search, and Delete employees.
-  * Manage Requests: View all requests and assign them to specific employees.
-* Employee Portal: Employees can view their assigned tasks and update the status (Assigned -> Picked Up -> Recycled).
-* Modern UI: Responsive design with a clean, eco-friendly aesthetic.
+  * **Manage Employees**: Create, List, Search, and Delete employees.
+  * **Manage Requests**: View all requests and assign them to specific employees.
+* **Employee Portal**: Employees can view their assigned tasks and update the status (Assigned -> Picked Up -> Recycled).
+* **Modern UI**: Responsive design with a clean, eco-friendly aesthetic.
 
 ## Tech Stack
 
-* Backend: Python, Flask, SQLAlchemy, SQLite.
-* Frontend: HTML5, CSS3, JavaScript (Fetch API).
-* Architecture: REST API.
+* **Backend**: Python, Flask, SQLAlchemy, SQLite.
+* **Frontend**: HTML5, CSS3, JavaScript (Fetch API).
+* **Architecture**: REST API.
 
 ---
 
@@ -33,50 +36,42 @@ The system is built as a Single Page Application (SPA) using a Flask (Python) ba
 ### Functional Requirements
 
 #### 1. Employee Management (CRUD)
-
 * Create: Admin can add new employees with name, email, phone, role, and start date
 * Read: Admin can view all employees and search by name
 * Update: Employee status can be modified (Active/Inactive)
 * Delete: Admin can remove employees from the system
 
 #### 2. Pickup Request Management (CRUD)
-
-* Create: Public users can submit pickup requests with item description and type
-* Read: Admin and employees can view requests; users can track their requests
+* Create: Public users can submit pickup requests via their dashboard
+* Read: Admin and employees can view requests; users can track their specific requests
 * Update: Admin can assign requests to employees; employees can update status
 * Delete: Requests can be archived after completion
 
 #### 3. User Management
-
-* Create: System creates demo users for public submissions
+* Create: Users can register for their own accounts
 * Read: Retrieve user information for request tracking
-* Authentication: Admin login/logout functionality
+* Authentication: Secure Login/Logout functionality for Users and Admins
 
 #### 4. Request Assignment & Workflow
-
 * Admin assigns pickup requests to specific employees
 * Employees update request status through workflow stages:
-
   * Created -> Assigned -> Picked Up -> Delivered to Center -> Processed -> Closed
 
 ### Non-Functional Requirements
 
 #### 1. Ease of Use
-
 * Intuitive user interface with clear navigation
 * Responsive design for desktop and mobile devices
 * Real-time feedback for user actions
 * Search and filter capabilities for data management
 
 #### 2. Performance
-
 * Fast page load times (< 2 seconds)
 * Efficient database queries using SQLAlchemy ORM
 * Asynchronous API calls for smooth user experience
 * Minimal server response time for CRUD operations
 
 #### 3. Data Integrity
-
 * Foreign key constraints to maintain referential integrity
 * Input validation on both frontend and backend
 * Transaction rollback on errors
@@ -84,9 +79,8 @@ The system is built as a Single Page Application (SPA) using a Flask (Python) ba
 * Proper error handling and user feedback
 
 #### 4. Security
-
-* Session-based authentication for admin portal
-* Password protection (demo uses plaintext; production should use hashing)
+* Session-based authentication for users and admin portal
+* Password protection
 * SQL injection prevention through ORM
 * CSRF protection via Flask sessions
 
@@ -97,16 +91,15 @@ The system is built as a Single Page Application (SPA) using a Flask (Python) ba
 ### Database Schema
 
 #### User Table
-
 | Field    | Type        | Constraints      | Description                      |
 | -------- | ----------- | ---------------- | -------------------------------- |
 | id       | Integer     | Primary Key      | Unique user identifier           |
 | username | String(80)  | Not Null         | User's display name              |
 | email    | String(120) | Unique, Not Null | User's email address             |
-| password | String(120) | Not Null         | User password (should be hashed) |
+| password | String(120) | Not Null         | User password                    |
+| full_name| String(100) | Optional         | User's full name                 |
 
 #### Employee Table
-
 | Field      | Type        | Constraints        | Description                |
 | ---------- | ----------- | ------------------ | -------------------------- |
 | id         | Integer     | Primary Key        | Unique employee identifier |
@@ -117,16 +110,7 @@ The system is built as a Single Page Application (SPA) using a Flask (Python) ba
 | status     | String(20)  | Default: Active    | Employment status          |
 | start_date | String(20)  | Optional           | Employment start date      |
 
-#### RecyclingCenter Table
-
-| Field    | Type        | Constraints | Description              |
-| -------- | ----------- | ----------- | ------------------------ |
-| id       | Integer     | Primary Key | Unique center identifier |
-| name     | String(100) | Not Null    | Center name              |
-| location | String(200) | Optional    | Physical address         |
-
 #### PickupRequest Table
-
 | Field                | Type        | Constraints               | Description                 |
 | -------------------- | ----------- | ------------------------- | --------------------------- |
 | id                   | Integer     | Primary Key               | Unique request identifier   |
@@ -135,171 +119,100 @@ The system is built as a Single Page Application (SPA) using a Flask (Python) ba
 | item_type            | String(50)  | Default: Other            | Category of item            |
 | status               | String(50)  | Default: Created          | Workflow status             |
 | assigned_employee_id | Integer     | Foreign Key (Employee.id) | Assigned employee           |
-| assigned_center_id   | Integer     | Foreign Key (Center.id)   | Assigned center             |
 | created_at           | DateTime    | Auto-generated            | Request creation timestamp  |
-
-### Entity Relationships
-
-User (1) -> (M) PickupRequest
-Employee (1) -> (M) PickupRequest
-RecyclingCenter (1) -> (M) PickupRequest
 
 ---
 
 ## API Reference
 
 ### Employee Endpoints
-
-#### GET /api/employees
-
-Retrieve all employees.
-
-#### POST /api/employees
-
-Create a new employee.
-
-#### DELETE /api/employees/{emp_id}
-
-Delete an employee by ID.
+* **GET /api/employees**: Retrieve all employees.
+* **POST /api/employees**: Create a new employee.
+* **DELETE /api/employees/{emp_id}**: Delete an employee by ID.
 
 ### Pickup Request Endpoints
-
-#### GET /api/requests
-
-Retrieve all pickup requests.
-
-#### POST /api/requests
-
-Create a new pickup request.
-
-#### PUT /api/requests/{req_id}/assign
-
-Assign a request to an employee or recycling center.
-
-#### PUT /api/requests/{req_id}/status
-
-Update the status of a pickup request.
+* **GET /api/requests**: Retrieve all pickup requests.
+* **POST /api/requests**: Create a new pickup request.
+* **PUT /api/requests/{req_id}/assign**: Assign a request to an employee.
+* **PUT /api/requests/{req_id}/status**: Update the status of a pickup request.
 
 ### User Endpoints
-
-#### GET /api/users/{user_id}
-
-Retrieve user information by ID.
+* **GET /api/users/{user_id}**: Retrieve user information by ID.
 
 ---
 
 ## Installation and Setup
 
-1. Ensure Python 3.7+ is installed.
-2. Clone the repository and navigate to the project directory.
-3. Install dependencies using requirements.txt.
-4. Initialize the database.
-5. Run the Flask application on [http://127.0.0.1:5001](http://127.0.0.1:5001).
+1. **Clone the repository** and navigate to the project directory.
+2. **Create a Virtual Environment**:
+   ```bash
+   python -m venv myvenv
+   # Windows
+   myvenv\Scripts\activate
+   # Mac/Linux
+   source myvenv/bin/activate
+   ```
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Initialize the database**: The application automatically creates `instance/database.db` on first run.
+5. **Run the Flask application**:
+   ```bash
+   python app.py
+   ```
+   Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
 ---
 
 ## Usage Guide
 
 ### Public User
-
-Submit pickup requests from the home page.
+1. **Register/Login**: Create an account from the Home Page.
+2. **Dashboard**: Navigate to your personal Dashboard.
+3. **Submit Request**: Click "New Request" to submit details about your e-waste.
+4. **Track**: View the status of your requests in the "My Requests" table.
 
 ### Admin Portal
-
-Login, manage employees, and assign pickup requests.
+1. Login at `/admin/login` (Default: `admin` / `admin123`).
+2. Manage Employees and Assign Requests.
 
 ### Employee Portal
-
-View assigned tasks and update request status.
-
----
-
-## Testing
-
-### Unit Tests
-
-Covers Employee and Pickup Request CRUD operations, database integrity, and model serialization.
-
-### Integration Test
-
-Validates the complete workflow from request creation to closure.
+1. Access the Employee Portal.
+2. Select your name to view and update assigned tasks.
 
 ---
 
 ## Project Structure
 
-Describes the organization of backend, frontend, database, and testing files.
+```
+e-waste-disposal-system/
+├── app.py              # Main Flask application & Routes
+├── models.py           # Database Models
+├── instance/           # SQLite Database
+├── static/             # Static files (CSS, JS)
+├── templates/          # HTML Templates
+│   ├── base.html       # Base layout
+│   ├── index.html      # Landing Page
+│   ├── user_dashboard.html # User Portal
+│   ├── admin.html      # Admin Dashboard
+│   └── ...
+└── README.md           # Project Documentation
+```
 
 ---
 
 ## Attribution
 
 ### Libraries and Frameworks
-
-* **Flask** (v2.3.0+)
-
-  * Web framework for Python
-  * Used for: Routing, request handling, session management
-  * License: BSD-3-Clause
-
-* **Flask-SQLAlchemy** (v3.0.0+)
-
-  * ORM extension for Flask
-  * Used for: Database modeling, queries, and migrations
-  * License: BSD-3-Clause
-
-* **SQLite**
-
-  * Embedded relational database
-  * Used for: Data persistence and storage
-  * License: Public Domain
-
----
+* **Flask**: Web framework for Python.
+* **Flask-SQLAlchemy**: ORM extension for Flask.
+* **SQLite**: Embedded relational database.
 
 ### Frontend Resources
-
-* **HTML5**
-
-  * Markup structure
-
-* **CSS3**
-
-  * Styling and responsive design
-
-* **Vanilla JavaScript**
-
-  * Client-side interactivity and API calls
-
-* **Fetch API**
-
-  * Asynchronous HTTP requests
+* **HTML5/CSS3**: Markup and Styling.
+* **Vanilla JavaScript**: Client-side interactivity.
+* **Google Fonts**: 'Outfit' typeface.
 
 ---
-
-### Development Tools
-
-* **Python** (v3.7+)
-
-  * Programming language
-
-* **Git**
-
-  * Version control system
-
-* **GitHub**
-
-  * Repository hosting and collaboration
-
----
-
-### Design Inspiration
-
-* Modern eco-friendly color schemes
-* Responsive card-based layouts
-* Material Design principles for UI components
-
----
-
-### Source Code
-
-* **GitHub Repository**: [snehas82523/e-waste-disposal-system](https://github.com/snehas82523/e-waste-disposal-system.git)
+*Developed for the DBS Programming for Information Systems Assessment.*

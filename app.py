@@ -13,13 +13,69 @@ db.init_app(app)
 def home():
     return render_template('index.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        full_name = request.form['full_name']
+        phone = request.form['phone']
+        address = request.form['address']
+
+        # Check if user exists
+        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing_user:
+            flash('Username or Email already exists.')
+            return redirect(url_for('register'))
+
+        new_user = User(username=username, email=email, password=password, full_name=full_name, phone=phone, address=address)
+        db.session.add(new_user)
+        db.session.commit()
+        
+        flash('Registration successful! Please login.')
+        return redirect(url_for('login'))
+
+    return render_template('user_register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        user = User.query.filter_by(username=username).first()
+        if user and user.password == password:
+            session['user_id'] = user.id
+            session['username'] = user.username
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    session.pop('username', None)
+    return redirect(url_for('home'))
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    requests = PickupRequest.query.filter_by(user_id=session['user_id']).order_by(PickupRequest.created_at.desc()).all()
+    return render_template('user_dashboard.html', requests=requests)
+
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         
-        # Hardcoded Admin Credentials
+        # Admin Credentials
         if username == 'admin' and password == 'admin123':
             session['admin_logged_in'] = True
             return redirect(url_for('admin_dashboard'))
@@ -86,10 +142,12 @@ def get_requests():
 @app.route('/api/requests', methods=['POST'])
 def create_request():
     data = request.json
-    # Simplify: assume User ID 1 exists for demo if not provided, or handle auth later
-    user_id = data.get('user_id', 1) 
+    # Use session user_id if available, otherwise fallback to payload (or default to 1)
+    user_id = session.get('user_id')
+    if not user_id:
+        user_id = data.get('user_id', 1) 
     
-    # Robustness Check: If User 1 doesn't exist (e.g. DB cleared), create it to avoid 500 Error
+    # Robustness Check: If User ID 1 is used and doesn't exist, create DemoUser
     if user_id == 1 and not User.query.get(1):
         demo_user = User(id=1, username='DemoUser', email='user@example.com', password='password')
         db.session.add(demo_user)

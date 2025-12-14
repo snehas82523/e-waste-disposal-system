@@ -6,13 +6,19 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)  # In real app, hash this!
+    password = db.Column(db.String(120), nullable=False)
+    full_name = db.Column(db.String(100), nullable=True)
+    address = db.Column(db.String(200), nullable=True)
+    phone = db.Column(db.String(20), nullable=True)
 
     def to_dict(self):
         return {
             'id': self.id, 
             'username': self.username, 
-            'email': self.email
+            'email': self.email,
+            'full_name': self.full_name,
+            'address': self.address,
+            'phone': self.phone
         }
 
 class Employee(db.Model):
@@ -67,5 +73,10 @@ class PickupRequest(db.Model):
             'status': self.status,
             'assigned_employee': self.employee.name if self.employee else None,
             'assigned_center': self.center.name if self.center else None,
-            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None,
+            'user_details': {
+                'name': self.user.full_name if self.user else 'Unknown',
+                'address': self.user.address if self.user else 'N/A',
+                'phone': self.user.phone if self.user else 'N/A'
+            }
         }

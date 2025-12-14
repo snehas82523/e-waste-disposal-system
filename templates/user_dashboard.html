@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section" style="padding-top: 6rem; padding-bottom: 3rem; text-align: center;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-color);">Welcome, {{ session.get('username')
+        }}!</h1>
+    <p style="font-size: 1.2rem; color: var(--text-muted);">Track your pickup requests below.</p>
+</div>
+
+<div class="grid-container" style="max-width: 900px; margin: 0 auto; display: block;">
+
+    <!-- Collapsible Request Form -->
+    <div id="request-form-container" style="display: none; margin-bottom: 2rem;">
+        <div class="form-container"
+            style="padding: 2rem; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">New Request</h3>
+                <button onclick="toggleForm()" class="btn-sm"
+                    style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <form id="pickup-request-form">
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+                    <select id="item-type" required style="margin-bottom: 0;">
+                        <option value="" disabled selected>Select Item Type...</option>
+                        <option value="Laptop">Laptop</option>
+                        <option value="Phone">Phone</option>
+                        <option value="Tablet">Tablet</option>
+                        <option value="Appliance">Appliance</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" id="item-desc" placeholder="Describe items (e.g., Broken Printer)" required
+                        style="margin-bottom: 0;">
+                </div>
+                <div style="margin-top: 1rem; text-align: right;">
+                    <button type="submit" class="btn-primary"
+                        style="width: auto; padding-left: 2rem; padding-right: 2rem;">Submit</button>
+                </div>
+                <div id="submission-message" style="margin-top: 1rem;"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="requests-list-container" class="card full-width">
+        <div class="req-header"
+            style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0; border: none; padding: 0; font-size: 1.5rem;">My Requests</h2>
+            <button onclick="toggleForm()" class="btn-action"
+                style="border-radius: 8px; background-color: #10b981; border: none; padding: 0.6rem 1.2rem; font-weight: 600;">New
+                Request</button>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if requests %}
+                {% for req in requests %}
+                <tr>
+                    <td class="req-id">#{{ req.id }}</td>
+                    <td>{{ req.item_description }}</td>
+                    <td>{{ req.item_type }}</td>
+                    <td>
+                        <span class="badge 
+                                {% if req.status == 'Created' %}badge-pending{% endif %}
+                                {% if req.status == 'Assigned' %}badge-info{% endif %}
+                                {% if req.status == 'Picked Up' %}badge-warning{% endif %}
+                                {% if req.status == 'Completed' %}badge-success{% endif %}
+                            ">
+                            {{ req.status }}
+                        </span>
+                    </td>
+                    <td>{{ req.created_at }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        You haven't made any requests yet.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleForm() {
+        const form = document.getElementById('request-form-container');
+        const list = document.getElementById('requests-list-container');
+
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+            list.style.display = 'none';
+        } else {
+            form.style.display = 'none';
+            list.style.display = 'block';
+        }
+    }
+</script>
+{% endblock %}

@@ -47,6 +47,10 @@ function setupIndex() {
                         <p>Status: <span class="badge badge-pending">${data.status}</span></p>
                     </div>`;
                 form.reset();
+                // Reload to update table
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
                 msgDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
             }

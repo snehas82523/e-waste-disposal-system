@@ -15,8 +15,26 @@
         <div class="logo">ReCycle & Reward</div>
         <div class="nav-links">
             <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+
+            <!-- Auth links restored -->
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+
+            {% if not session.get('user_id') %}
+            <div
+                style="border-left: 1px solid rgba(255,255,255,0.3); height: 20px; display: inline-block; margin: 0 10px; vertical-align: middle;">
+            </div>
+
+            {% if session.get('admin_logged_in') %}
+            <a href="{{ url_for('admin_dashboard') }}">Admin Panel</a>
+            <a href="{{ url_for('admin_logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('admin_login') }}">Admin Login</a>
             <a href="{{ url_for('employee_portal') }}">Employee Portal</a>
+            {% endif %}
+            {% endif %}
         </div>
     </nav>
 

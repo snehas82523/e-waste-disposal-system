@@ -1,27 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section">
-    <h1>Turn Your <span style="color:var(--accent-color)">E-Waste</span> into Rewards</h1>
-    <p>Recycle your electronics responsibly and earn rewards.</p>
+<div class="hero-section" style="padding-top: 8rem; text-align: center;">
+    <h1 style="font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem;">
+        Turn Your <span style="color:var(--accent-color)">E-Waste</span> into Rewards
+    </h1>
+    <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 3rem;">
+        Recycle your electronics responsibly and earn rewards.
+    </p>
 
-
-    <div class="form-container">
-        <h3>Request a Pickup</h3>
-        <form id="pickup-request-form">
-            <select id="item-type" required>
-                <option value="" disabled selected>Select Item Type...</option>
-                <option value="Laptop">Laptop</option>
-                <option value="Phone">Phone</option>
-                <option value="Tablet">Tablet</option>
-                <option value="Appliance">Appliance</option>
-                <option value="Other">Other</option>
-            </select>
-            <textarea id="item-desc" placeholder="Describe the items (e.g., Old Laptop, Broken Phone)"
-                required></textarea>
-            <button type="submit" class="btn-primary">Submit Request</button>
-        </form>
-        <div id="submission-message"></div>
+    <div class="card"
+        style="max-width: 500px; margin: 0 auto; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+        {% if session.get('user_id') %}
+        <h3 style="margin-top: 0; color: var(--text-main);">Welcome Back!</h3>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">You are already logged in.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn-primary"
+            style="display: inline-block; width: 100%; box-sizing: border-box; text-decoration: none;">Go to
+            Dashboard</a>
+        {% else %}
+        <h3 style="margin-top: 0; color: var(--text-main);">Ready to Recycle?</h3>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Please <a href="{{ url_for('login') }}">Login</a> or
+            <a href="{{ url_for('register') }}">Register</a> to request a pickup.
+        </p>
+        <a href="{{ url_for('login') }}" class="btn-primary"
+            style="display: inline-block; width: 100%; box-sizing: border-box; text-decoration: none;">Login Now</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
