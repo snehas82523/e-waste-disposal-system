@@ -87,7 +87,6 @@ async function loadEmployees() {
         // Search Listener
         const searchInput = document.getElementById('employee-search');
         if (searchInput) {
-            // Remove old listener to avoid duplicates if re-run (simple approach: clone or just overwrite)
             // Ideally we'd name the handler, but for this scope:
             searchInput.oninput = (e) => {
                 const term = e.target.value.toLowerCase();
@@ -201,15 +200,6 @@ async function loadEmployeeTasks(empId) {
         const res = await fetch('/api/requests');
         const allRequests = await res.json();
 
-        // Filter client-side for simplicity (in real app, use API filter)
-        // Adjust logic: If ID matches assigned_employee string name?
-        // Wait, backend returns name string. We need to match somewhat loosely or fix backend to return ID.
-        // Checking app.py... `assigned_employee` is `self.employee.name`.
-        // This makes filtering by ID hard.
-        // PATCH: Let's assume for this demo we filter by checking if the row is assigned.
-        // Since we don't have the ID in the GET /requests response, we will just show ALL assigned tasks
-        // and pretend they belong to the user, OR filter by the name selected in the dropdown.
-
         const selectedText = document.querySelector('#employee-select-portal option:checked').textContent;
         const empName = selectedText.split(' (')[0]; // Extract name
 
@@ -233,7 +223,6 @@ async function loadEmployeeTasks(empId) {
 }
 
 
-// --- Shared / Utils ---
 
 async function loadRequests(containerId, isAdmin) {
     const list = document.getElementById(containerId);

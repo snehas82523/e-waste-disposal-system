@@ -1,4 +1,4 @@
-# E-Waste Recycling Management System
+# E-Waste disposal System
 
 ## Overview
 

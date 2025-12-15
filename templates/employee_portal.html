@@ -2,7 +2,8 @@
 
 {% block content %}
 <div class="employee-dashboard">
-    <div class="header-section" style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+    <div class="header-section"
+        style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; margin-top: 5rem;">
         <h1 style="margin: 0;">Employee Portal</h1>
         <div class="employee-controls">
             <select id="employee-select-portal">
@@ -12,7 +13,7 @@
         </div>
     </div>
 
-    <div class="grid-container">
+    <div class="grid-container" style="display: flex; justify-content: center; width: 100%;">
         <div class="card full-width">
             <h2>My Active Tasks</h2>
             <div id="my-tasks-list" class="list-container">
